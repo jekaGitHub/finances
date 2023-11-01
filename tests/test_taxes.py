@@ -1,6 +1,6 @@
 import pytest
 
-from src.taxes import calculate_taxes
+from src.taxes import calculate_taxes, calculate_tax
 
 
 @pytest.fixture
@@ -22,3 +22,23 @@ def test_calculate_taxes_invalid_tax_rate(prices):
 def test_calculate_taxes_invalid_price():
     with pytest.raises(ValueError):
         calculate_taxes([-100, 100], 10)
+
+
+@pytest.mark.parametrize("price, tax_rate, expected", [(100, 10, 110.0),
+                                                       (50, 5, 52.5),
+                                                       (100, 0, 100.0)
+                                                       ])
+def test_calculate_tax(price, tax_rate, expected):
+    assert calculate_tax(price, tax_rate) == expected
+
+
+@pytest.mark.parametrize("price", [-100, 0])
+def test_calculate_tax_invalid_price(price):
+    with pytest.raises(ValueError):
+        calculate_tax(price, 10)
+
+
+@pytest.mark.parametrize("tax_rate", [-100, 100, 101])
+def test_calculate_tax_invalid_price(tax_rate):
+    with pytest.raises(ValueError):
+        calculate_tax(100, tax_rate)
